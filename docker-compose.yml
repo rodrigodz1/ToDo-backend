@@ -1,0 +1,37 @@
+version: "3.2"
+services:
+  app:
+    build: .
+    image: trab-seg/node
+    container_name: nodetrab
+    depends_on:
+      - db
+    links:
+      - db
+    ports:
+      - "3333:3333"
+    volumes:
+      - .:/app/
+      - /app/node_modules
+    networks:
+      - backend-seg
+  db:
+    image: mysql
+    container_name: mysql-seg
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    networks:
+      - backend-seg
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_USER=rodrigo
+      - MYSQL_PASSWORD=test
+      - MYSQL_DATABASE=trabalho
+      - MYSQL_ROOT_PASSWORD=admin
+    expose:
+      - 3306
+
+networks:
+  backend-seg:
+    driver: bridge
