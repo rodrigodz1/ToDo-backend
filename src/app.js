@@ -19,6 +19,6 @@ app.get('/', (req, res) => {
 })
 
 
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
     console.log(`Servidor rodando na porta ${port}`)
 })
