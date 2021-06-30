@@ -16,21 +16,37 @@ services:
     networks:
       - backend-seg
   db:
-    image: mysql
-    container_name: mysql-seg
-    command: --default-authentication-plugin=mysql_native_password
+    #POSTGRES
+    image: postgres
     restart: always
+    ports:
+      - '5432:5432'
+    container_name: 'pgsql-seg'
+    environment:
+      POSTGRES_PASSWORD: test
+      POSTGRES_USER: rodrigo
+      POSTGRES_DB: trabalho
+    expose:
+      - 5432
     networks:
       - backend-seg
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_USER=rodrigo
-      - MYSQL_PASSWORD=test
-      - MYSQL_DATABASE=trabalho
-      - MYSQL_ROOT_PASSWORD=admin
-    expose:
-      - 3306
+
+    #MYSQL
+    #image: mysql
+    #container_name: mysql-seg
+    #command: --default-authentication-plugin=mysql_native_password
+    #restart: always
+    #networks:
+    #  - backend-seg
+    #ports:
+    #  - "3306:3306"
+    #environment:
+    #  - MYSQL_USER=rodrigo
+    #  - MYSQL_PASSWORD=test
+    #  - MYSQL_DATABASE=trabalho
+    #  - MYSQL_ROOT_PASSWORD=admin
+    #expose:
+    #  - 3306
 
 networks:
   backend-seg:

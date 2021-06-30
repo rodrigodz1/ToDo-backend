@@ -4,8 +4,8 @@ module.exports = {
     username: "rodrigo",
     password: "test",
     database: "trabalho",
-    host: "mysql-seg",
-    dialect: "mysql",
+    host: "pgsql-seg",
+    dialect: "postgres",
     define: {
         timestamps: true,
         underscored: true,
