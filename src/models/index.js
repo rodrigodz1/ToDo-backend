@@ -11,6 +11,7 @@ let sequelize;
 
 
 sequelize = new Sequelize(
+    config.dialect,
     config.url,
     config.database,
     config.username,
