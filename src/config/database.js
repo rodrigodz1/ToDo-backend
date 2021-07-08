@@ -30,7 +30,6 @@ else if (process.env.NODE_ENV == 'dev'){
 } else if (process.env.NODE_ENV == 'prod') {
 
     console.log("Ambiente de produção selecionado.");
-    console.log("DATABASE_URL:", process.env.DATABASE_URL);
 
     module.exports = {
         url: process.env.DATABASE_URL,

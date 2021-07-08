@@ -8,8 +8,10 @@ const config = require(__dirname + "/../config/database.js");
 const db = {};
 
 let sequelize;
+
+
 sequelize = new Sequelize(
-    //config.url,
+    config.url,
     config.database,
     config.username,
     config.password,
