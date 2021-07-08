@@ -5,6 +5,7 @@ const cors = require("cors");
 
 app.use(cors());
 app.options("*", cors());
+require('dotenv').config()
 
 app.use(express.json());
 
