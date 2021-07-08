@@ -9,15 +9,20 @@ const db = {};
 
 let sequelize;
 
+if (process.env.NODE_ENV == "prod"){
+    sequelize = new Sequelize(
+        config.url,
+        config
+    );
+} else {
+    sequelize = new Sequelize(
+        config.database,
+        config.username,
+        config.password,
+        config
+    );
+}
 
-sequelize = new Sequelize(
-    config.dialect,
-    config.url,
-    config.database,
-    config.username,
-    config.password,
-    config
-);
 
 fs.readdirSync(__dirname)
     .filter((file) => {
