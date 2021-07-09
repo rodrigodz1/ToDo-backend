@@ -18,7 +18,7 @@ module.exports = {
                 const id = findUser.id
                 console.log("Você está logado");
                 const token = jwt.sign({ id }, "ULTRASUPERSECRETKEYDOAPP", {
-                    expiresIn: 300 //5 min
+                    expiresIn: 600 //10 min
                 })
 
                 return response.json({ accesstoken: token })
@@ -57,7 +57,7 @@ module.exports = {
             let id = user.id
 
             const token = jwt.sign({ id }, "ULTRASUPERSECRETKEYDOAPP", {
-                expiresIn: 300 //5 min
+                expiresIn: 600 //10 min
             })
 
 

@@ -4,6 +4,7 @@ services:
     build: .
     image: trab-seg/node
     container_name: nodetrab
+    #command: bash -c "chmod +x /init.sh & ./init.sh"
     depends_on:
       - db
     links:

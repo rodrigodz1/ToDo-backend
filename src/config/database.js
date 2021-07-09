@@ -5,10 +5,7 @@ require("dotenv").config({
       path.resolve(__dirname, "../../.env"),
   });
 
-if (!process.env.NODE_ENV){
-    console.log("Inicializando banco de dados...")
-}
-else if (process.env.NODE_ENV == 'dev'){
+if ((process.env.NODE_ENV == 'dev') || (!process.env.NODE_ENV)){
     
       
       console.log("Ambiente de desenvolvimento selecionado.");

@@ -14,7 +14,7 @@ if (process.env.NODE_ENV == "prod"){
         config.url,
         config
     );
-} else {
+} else if (process.env.NODE_ENV == "dev") {
     sequelize = new Sequelize(
         config.database,
         config.username,
