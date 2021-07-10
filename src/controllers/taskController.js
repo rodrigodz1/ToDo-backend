@@ -5,16 +5,23 @@ module.exports = {
 
     async createTask(request, response) {
         try {
-            let decodedToken = jwt.decode(request.headers.accesstoken)
+            let accesstoken = request.headers.accesstoken
+
+            let result = jwt.verify(accesstoken, "ULTRASUPERSECRETKEYDOAPP")
+
+            if (!result){
+                return response.status(403).json({ msg: "Token invalido/expirado" })
+            }
+
             let findUser = await User.findOne({
-                where: { id: decodedToken.id }
+                where: { id: result.id }
             })
 
             if (!findUser) {
                 return response.status(403).json({ msg: "Usuario referenciado não existe" })
             }
             else {
-                request.body.user_id = decodedToken.id
+                request.body.user_id = result.id
                 const task = await Task.create(request.body)
 
                 return response.status(201).json(task)
@@ -27,9 +34,16 @@ module.exports = {
 
     async getTasks(request, response) {
         try {
-            let decodedToken = jwt.decode(request.headers.accesstoken)
+            let accesstoken = request.headers.accesstoken
+
+            let result = jwt.verify(accesstoken, "ULTRASUPERSECRETKEYDOAPP")
+
+            if (!result){
+                return response.status(403).json({ msg: "Token invalido/expirado" })
+            }
+
             let tasks = await Task.findAll({
-                where: { user_id: decodedToken.id }
+                where: { user_id: result.id }
             })
 
             if (tasks == "") {
@@ -37,6 +51,33 @@ module.exports = {
             }
             else {
                 return response.status(201).json(tasks)
+            }
+
+        } catch (error) {
+            return response.status(400).json({ msg: "Erro: " + error })
+        }
+    },
+
+    async getAllTasks(request, response) {
+        try {
+            let accesstoken = request.headers.accesstoken
+
+            let result = jwt.verify(accesstoken, "ULTRASUPERSECRETKEYDOAPP")
+
+            if (!result){
+                return response.status(403).json({ msg: "Token invalido/expirado" })
+            }
+
+            let findUser = await User.findOne({
+                where: { id: result.id }
+            })
+
+            if (findUser.is_superuser === true){
+                let tasks = await Task.findAll()
+                
+                return response.status(200).json({ tasks: tasks })
+            } else {
+                return response.status(403).json({ msg: "Você não é administrador." })
             }
 
         } catch (error) {
@@ -104,18 +145,22 @@ module.exports = {
 
     async delete(request, response) {
         try {
-            let decodedToken = jwt.decode(request.headers.accesstoken)
+            let accesstoken = request.headers.accesstoken
+
+            let result = jwt.verify(accesstoken, "ULTRASUPERSECRETKEYDOAPP")
 
             let task_id = request.params.id
             let task = await Task.findOne({
                 where: { id: task_id }
             })
 
+            let currentUser = await User.findOne({
+                where: { id: result.id }
+            })
+
             if (task) {
 
-                if (decodedToken.id !== task.user_id) {
-                    return response.status(403).json({ msg: "Usuário não tem permissão para remover essa task." })
-                } else {
+                if (currentUser.is_superuser === true || result.id === task.user_id){
                     await Task.destroy({
                         where: {
                             id: task.id
@@ -123,6 +168,9 @@ module.exports = {
                     })
 
                     return response.json({ msg: "Task removida com sucesso" })
+                }
+                else {
+                    return response.status(403).json({ msg: "Usuário não tem permissão para remover essa task." })
                 }
 
 
