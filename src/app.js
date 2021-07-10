@@ -11,9 +11,11 @@ app.use(express.json());
 
 const authRouter = require('./routes/authRoute')
 const taskRouter = require('./routes/taskRoute')
+const userRouter = require('./routes/userRoute')
 
 app.use("/auth", authRouter)
 app.use("/task", taskRouter)
+app.use("/user", userRouter)
 
 app.get('/', (req, res) => {
     res.send('Backend do trabalho de segurança.')
