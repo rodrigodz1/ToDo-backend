@@ -52,6 +52,11 @@ module.exports = {
 
     async register(request, response) {
         try {
+
+            if (request.body.is_superuser === true){
+                return response.status(403).json({ msg: "Você não tem permissão para criar um administrador."})
+            }
+
             //TO-DO: encryptar senha e usar salt antes de gravar na db
             const user = await User.create(request.body)
             let id = user.id
@@ -62,6 +67,51 @@ module.exports = {
 
 
             return response.status(201).json({ user: user, accesstoken: token })
+
+        } catch (error) {
+            return response.status(400).json({ msg: "Erro: " + error })
+        }
+    },
+
+    async registerSuperuser(request, response) {
+        try {
+            let accesstoken = request.headers.accesstoken
+
+            let result = jwt.verify(accesstoken, "ULTRASUPERSECRETKEYDOAPP")
+
+            if (!result) {
+                return response.status(403).json({ msg: "token invalido/expirado" })
+            } else {
+                let userRequisitante = await User.findOne({
+                    where: {
+                        id: result.id
+                    }
+                })
+
+                if (userRequisitante.is_superuser === true) {
+                    const new_user = await User.create(request.body)
+                    return response.status(201).json({ msg: "Novo administrador registrado com sucesso." })
+                } else {
+                    return response.status(403).json({ msg: "Requer privilégio de administrador." })
+                }
+                /*  garante que apenas um superuser possa registrar outro superuser
+                    o primeiro superuser, então, deve ser cadastrado diretamente
+                    pelo banco.
+                */
+            }
+
+            /*
+            TO-DO: encryptar senha e usar salt antes de gravar na db
+            
+            let id = user.id
+
+            const token = jwt.sign({ id }, "ULTRASUPERSECRETKEYDOAPP", {
+                expiresIn: 600 //10 min
+            })
+
+
+            return response.status(201).json({ user: user, accesstoken: token })
+            */
 
         } catch (error) {
             return response.status(400).json({ msg: "Erro: " + error })

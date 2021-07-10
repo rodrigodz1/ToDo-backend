@@ -14,6 +14,10 @@ const User = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(250),
                 allowNull: true,
             },
+            is_superuser: {
+                type: DataTypes.BOOLEAN,
+                allowNull: true,
+            }
         },
         {
             tableName: "users",
