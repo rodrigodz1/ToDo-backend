@@ -1,20 +1,26 @@
 const jwt = require('jsonwebtoken')
 const { User } = require("../models")
+const bcrypt = require("bcrypt")
 
 module.exports = {
 
     async login(request, response) {
         try {
-            let user = request.body
+            const user = request.body
 
-            let findUser = await User.findOne({
+            const findUser = await User.findOne({
                 where: { email: request.body.email }
             })
+
+            const PwdCheck = await bcrypt.compare(
+                user.password,
+                findUser.password
+            );
 
             if (!findUser) {
                 return response.status(403).json({ msg: "Usuario nao encontrado" })
             }
-            else if (user.password === findUser.password) {
+            else if (PwdCheck) {
                 const id = findUser.id
                 console.log("Você está logado");
                 const token = jwt.sign({ id }, "ULTRASUPERSECRETKEYDOAPP", {
@@ -33,7 +39,6 @@ module.exports = {
 
     async logout(request, response) {
         try {
-            let user = request.body
 
             let findUser = await User.findOne({
                 where: { email: request.body.email }
@@ -52,6 +57,9 @@ module.exports = {
 
     async register(request, response) {
         try {
+            
+            const salt = await bcrypt.genSalt(10);
+            request.body.password = bcrypt.hashSync(request.body.password, salt);
 
             if (request.body.is_superuser === true){
                 return response.status(403).json({ msg: "Você não tem permissão para criar um administrador."})

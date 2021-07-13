@@ -21,7 +21,7 @@ if ((process.env.NODE_ENV == 'dev') || (!process.env.NODE_ENV)){
               timestamps: true,
               underscored: true,
           },
-          logging: false,
+          logging: true, //logs das queries sql
       };
 
 } else if (process.env.NODE_ENV == 'prod') {
