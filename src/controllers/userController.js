@@ -8,7 +8,7 @@ module.exports = {
     try {
       let accesstoken = request.headers.accesstoken
 
-      let result = jwt.verify(accesstoken, "ULTRASUPERSECRETKEYDOAPP")
+      let result = jwt.verify(accesstoken, process.env.JWT_SECRET)
 
       if (!result){
         return response.status(403).json({ msg: "Token invalido/expirado" })

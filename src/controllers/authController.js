@@ -23,7 +23,7 @@ module.exports = {
             else if (PwdCheck) {
                 const id = findUser.id
                 console.log("Você está logado");
-                const token = jwt.sign({ id }, "ULTRASUPERSECRETKEYDOAPP", {
+                const token = jwt.sign({ id }, process.env.JWT_SECRET, {
                     expiresIn: 600 //10 min
                 })
 
@@ -57,6 +57,16 @@ module.exports = {
 
     async register(request, response) {
         try {
+
+            const listaSenhasPossivelmenteFracas = ["senha123", "12345678", "password"]
+
+            if (listaSenhasPossivelmenteFracas.includes(request.body.password)){
+
+                return response.status(400).json({ msg: "Senha já encontrada em bancos de dados. Por favor, escolha uma senha mais forte" })
+            } else if ((request.body.password).length < 8){
+                return response.status(400).json({ msg: "Senha muito pequena." })
+            }
+
             
             const salt = await bcrypt.genSalt(10);
             request.body.password = bcrypt.hashSync(request.body.password, salt);
@@ -69,7 +79,7 @@ module.exports = {
             const user = await User.create(request.body)
             let id = user.id
 
-            const token = jwt.sign({ id }, "ULTRASUPERSECRETKEYDOAPP", {
+            const token = jwt.sign({ id }, process.env.JWT_SECRET, {
                 expiresIn: 600 //10 min
             })
 
@@ -77,7 +87,11 @@ module.exports = {
             return response.status(201).json({ user: user, accesstoken: token })
 
         } catch (error) {
-            return response.status(400).json({ msg: "Erro: " + error })
+            let msg
+            if (error = "SequelizeUniqueConstraintError: Validation error"){
+                msg = "E-mail já cadastrado."
+            }
+            return response.status(400).json({ msg: msg })
         }
     },
 
@@ -85,7 +99,7 @@ module.exports = {
         try {
             let accesstoken = request.headers.accesstoken
 
-            let result = jwt.verify(accesstoken, "ULTRASUPERSECRETKEYDOAPP")
+            let result = jwt.verify(accesstoken, process.env.JWT_SECRET)
 
             if (!result) {
                 return response.status(403).json({ msg: "token invalido/expirado" })
@@ -113,7 +127,7 @@ module.exports = {
             
             let id = user.id
 
-            const token = jwt.sign({ id }, "ULTRASUPERSECRETKEYDOAPP", {
+            const token = jwt.sign({ id }, process.env.JWT_SECRET, {
                 expiresIn: 600 //10 min
             })
 
@@ -130,7 +144,7 @@ module.exports = {
         try {
             let accesstoken = request.body.accesstoken
 
-            let result = jwt.verify(accesstoken, "ULTRASUPERSECRETKEYDOAPP")
+            let result = jwt.verify(accesstoken, process.env.JWT_SECRET)
 
             if (!result) {
                 return response.status(403).json({ msg: "token expirado" })
